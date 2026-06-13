@@ -27,13 +27,18 @@ body {
   display: flex;
   justify-content: end;
   align-items: end;
+  flex-wrap: wrap;
+  overflow: hidden;
 }
 
 .display {
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 700;
   padding: 0px 20px 12px 0px;
   color: #f8f8f2;
+  overflow-wrap: anywhere;
+  text-align: right;
+  flex: 1;
 }
 
 button {
