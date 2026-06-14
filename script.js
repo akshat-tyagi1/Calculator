@@ -26,10 +26,13 @@ digitBtns.forEach((digitBtn) => {
 operatorBtns.forEach((operatorBtn) => {
   operatorBtn.addEventListener("click", () => {
     let str = display.textContent;
-    if (opArr.includes(str[str.length - 1])) {
+    let operator = operatorBtn.textContent;
+    if (opArr.includes(str[0]) && str.length === 1) {
       return;
     }
-    let operator = operatorBtn.textContent;
+    if (opArr.includes(str[str.length - 1])) {
+      str = str.slice(0, -1) + operator;
+    }
     if (display.textContent === "0" && operator === "-") {
       return (display.textContent = operator);
     }
@@ -39,9 +42,15 @@ operatorBtns.forEach((operatorBtn) => {
 });
 
 function doCalculation(str) {
-  if (opArr.some((op) => str.includes(op))) {
-    const op = opArr.find((operator) => str.includes(operator));
-    let opIndex = str.indexOf(op);
+  let startIndex = 0;
+  let searchStr = str;
+  if (str[0] === "-") {
+    startIndex = 1;
+    searchStr = str.slice(1);
+  }
+  if (opArr.some((op) => searchStr.includes(op))) {
+    const op = opArr.find((operator) => searchStr.includes(operator));
+    let opIndex = str.indexOf(op, startIndex);
     let num1 = Number(str.slice(0, opIndex));
     let num2 = Number(str.slice(opIndex + 1, str.length));
     if (op === "+") {
