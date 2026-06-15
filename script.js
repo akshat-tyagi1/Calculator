@@ -30,11 +30,12 @@ operatorBtns.forEach((operatorBtn) => {
     if (opArr.includes(str[0]) && str.length === 1) {
       return;
     }
-    if (opArr.includes(str[str.length - 1])) {
-      str = str.slice(0, -1) + operator;
-    }
     if (display.textContent === "0" && operator === "-") {
       return (display.textContent = operator);
+    }
+    if (opArr.includes(str[str.length - 1])) {
+      display.textContent = str.slice(0, -1) + operator;
+      return;
     }
     doCalculation(str);
     display.textContent += operator;
@@ -49,6 +50,9 @@ function doCalculation(str) {
     searchStr = str.slice(1);
   }
   if (opArr.some((op) => searchStr.includes(op))) {
+    if (opArr.includes(str[str.length - 1])) {
+    return;
+  }
     const op = opArr.find((operator) => searchStr.includes(operator));
     let opIndex = str.indexOf(op, startIndex);
     let num1 = Number(str.slice(0, opIndex));
