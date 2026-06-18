@@ -64,6 +64,16 @@ function handleDigit(digit) {
 }
 
 function handleOperator(op) {
+  if (expression === "-" && currentNumber === "-") {
+    if (op === "-") {
+      return
+    }
+    expression = "";
+    currentNumber = "";
+    updateDisplay();
+    return;
+  }
+
   if (expression === "") {
     if (op === "-") {
       expression += operatorSymbols[op];
@@ -75,21 +85,23 @@ function handleOperator(op) {
   }
 
   if (currentNumber === "") {
-    if (operator === "*" || operator === "/") {
-      if (op === "-") {
-        expression += operatorSymbols[op];
-        currentNumber += operatorSymbols[op];
-        updateDisplay();
-        return
-      }
-    }
     if (operator !== null) {
+      if (operator === "*" || operator === "/") {
+        if (op === "-") {
+          expression += operatorSymbols[op];
+          currentNumber += operatorSymbols[op];
+          updateDisplay();
+          return;
+        }
+      }
       expression = expression.slice(0, -1) + operatorSymbols[op];
       operator = op;
-      updateDisplay()
+      updateDisplay();
       return;
     }
-  } else if (currentNumber === "-") {
+  }
+
+  if (currentNumber === "-") {
     expression = expression.slice(0, -2) + operatorSymbols[op];
     currentNumber = "";
     operator = op;
@@ -180,7 +192,7 @@ function handleClear() {
 
 function handleBackspace() {
   if (currentNumber === "" && operator !== null) {
-    operator = null
+    operator = null;
   }
   expression = expression.slice(0, -1);
   updateDisplay();
@@ -192,6 +204,7 @@ function handleDecimal() {
     currentNumber = "";
     justCalculated = false;
   }
+
   if (currentNumber.includes(".")) {
     return;
   }
@@ -232,5 +245,7 @@ document.addEventListener("keydown", (event) => {
     handleBackspace();
   } else if (event.key === "c") {
     handleClear();
+  } else if (event.key === "%") {
+    handlePercent();
   }
 });
