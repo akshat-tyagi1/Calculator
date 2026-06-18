@@ -4,6 +4,7 @@ const digitBtns = document.querySelectorAll(".digit-btn");
 const operatorBtns = document.querySelectorAll(".operator-btn");
 const equalBtn = document.querySelector(".equal-btn");
 const backspaceBtn = document.querySelector(".backspace-btn");
+const decimalBtn = document.querySelector(".decimal-btn");
 
 let currentNumber = "";
 let previousNumber = "";
@@ -15,7 +16,6 @@ let justCalculated = false;
 digitBtns.forEach((button) => {
   button.addEventListener("click", () => {
     let digit = button.textContent;
-    expression += digit;
     handleDigit(digit);
   });
 });
@@ -23,9 +23,12 @@ digitBtns.forEach((button) => {
 operatorBtns.forEach((button) => {
   button.addEventListener("click", () => {
     let op = button.dataset.operator;
-    expression += operatorSymbols[op];
     handleOperator(op);
   });
+});
+
+decimalBtn.addEventListener("click", () => {
+  handleDecimal();
 });
 
 equalBtn.addEventListener("click", () => {
@@ -46,17 +49,36 @@ function updateDisplay() {
 
 function handleDigit(digit) {
   if (justCalculated) {
+    expression = "";
     currentNumber = "";
     justCalculated = false;
   }
   currentNumber += digit;
+  expression += digit;
   updateDisplay();
 }
 
 function handleOperator(op) {
-  if (currentNumber === "") {
-    return;
-  }
+  // if (currentNumber === "" || currentNumber === "-") {
+  //   if (operator !== null) {
+  //     if ((operator === "*" || operator === "/") && op === "-") {
+  //       currentNumber += op;
+  //       expression += operatorSymbols[op];
+  //       updateDisplay();
+  //       return;
+  //     } else if ((operator === "*" || operator === "/") && op !== "-") {
+  //       currentNumber = "";
+  //       operator = op;
+  //       expression = expression.slice(0, -2) + operatorSymbols(operator);
+  //       updateDisplay();
+  //       return;
+  //     }
+  //     operator = op;
+  //     expression = expression.slice(0, -1) + operatorSymbols[operator];
+  //     updateDisplay();
+  //   }
+  //   return;
+  // }
 
   if (operator !== null) {
     previousNumber = doCalculation(previousNumber, currentNumber, operator);
@@ -74,6 +96,7 @@ function handleOperator(op) {
   }
 
   operator = op;
+  expression += operatorSymbols[operator];
   updateDisplay();
 }
 
@@ -97,7 +120,6 @@ function doCalculation(previousNumber, currentNumber, operator) {
 
     case "/":
       if (currentNumber === 0) {
-        alert("Error, Cannot divide by 0");
         return "Error";
       }
       result = previousNumber / currentNumber;
@@ -135,6 +157,41 @@ function handleClear() {
 }
 
 function handleBackspace() {
-  expression = currentNumber.slice(0, -1);
+  expression = expression.slice(0, -1);
   updateDisplay();
 }
+
+function handleDecimal() {
+  if (justCalculated) {
+    expression = "";
+    currentNumber = "";
+    justCalculated = false;
+  }
+  if (currentNumber.includes(".")) {
+    return;
+  }
+  currentNumber += ".";
+  expression += ".";
+  updateDisplay();
+}
+
+// Keyboard events
+
+document.addEventListener("keydown", (event) => {
+  const digitArr = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+  const operatorArr = ["+", "-", "*", "/"];
+
+  if (digitArr.includes(event.key)) {
+    handleDigit(event.key);
+  } else if (event.key === "."){
+    handleDecimal();
+  } else if (operatorArr.includes(event.key)) {
+    handleOperator(event.key);
+  } else if (event.key === "Enter") {
+    handleEquals();
+  } else if (event.key === "Backspace") {
+    handleBackspace();
+  } else if (event.key === "c") {
+    handleClear();
+  }
+})
