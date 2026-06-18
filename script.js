@@ -64,9 +64,11 @@ function handleDigit(digit) {
 }
 
 function handleOperator(op) {
+  justCalculated = false;
+
   if (expression === "-" && currentNumber === "-") {
     if (op === "-") {
-      return
+      return;
     }
     expression = "";
     currentNumber = "";
@@ -165,6 +167,7 @@ function handleEquals() {
     return;
   }
   currentNumber = doCalculation(previousNumber, currentNumber, operator);
+  currentNumber = String(currentNumber)
 
   if (currentNumber === "Error") {
     display.textContent = currentNumber;
@@ -174,7 +177,7 @@ function handleEquals() {
     return;
   }
 
-  expression = String(currentNumber);
+  expression = currentNumber;
   justCalculated = true;
   previousNumber = "";
   operator = null;
@@ -191,10 +194,21 @@ function handleClear() {
 }
 
 function handleBackspace() {
-  if (currentNumber === "" && operator !== null) {
+  if (currentNumber !== "") {
+    if (expression.length === 1) {
+      currentNumber = "";
+      expression = "";
+      updateDisplay();
+      return;
+    }
+    currentNumber = currentNumber.slice(0, -1);
+    expression = expression.slice(0, -1);
+  } else if (currentNumber === "" && operator !== null) {
     operator = null;
+    currentNumber = previousNumber;
+    previousNumber = "";
+    expression = expression.slice(0, -1);
   }
-  expression = expression.slice(0, -1);
   updateDisplay();
 }
 
